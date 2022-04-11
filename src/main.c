@@ -19,9 +19,11 @@ int main()
     for(int i = 0; i < 12; i++)
     {
         executeSVM(&svm);
-        printf("%f %f %f\n", svm.t1, svm.t2, svm.t0);
+        printf("theta: %f", svm.theta);
+        printf("t1: %f; t2: %f; t0: %f\n", svm.t1, svm.t2, svm.t0);
+        printf("V1: ");
         printVector(svm.v1);
-        printf(" ");
+        printf("; V2: ");
         printVector(svm.v2);
         printf("\n");
     }
