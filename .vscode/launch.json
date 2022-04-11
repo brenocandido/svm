@@ -2,11 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch",
+      "name": "Launch executable",
       "type": "cppdbg",
       "request": "launch",
       "cwd": "${workspaceRoot}",
-      "program": "${workspaceRoot}/main.exe"
+      "program": "${workspaceRoot}/main.exe",
+      "preLaunchTask": "Make build"
     },
   ]
 }
