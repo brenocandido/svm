@@ -12,13 +12,14 @@
 
 typedef uint8_t SvmVector_t;
 
-typedef struct _SVM
+typedef struct
 {
     // Inputs
-    float m;
-    float freq;         // Hertz
+    float alpha;
+    float beta;
+    // float freq;         // Hertz
     float ts;           // Switching period
-    float deltaT;       // Time-step for calculating theta
+    // float deltaT;       // Time-step for calculating theta
 
     // Outputs
     float t1;
@@ -28,14 +29,16 @@ typedef struct _SVM
     SvmVector_t v2;
 
     // Calculation variables
+    float m;
     float theta;        // rad
-    float sinTheta;
-    float cosTheta;
+    float theta_mod;        // rad
+    // float sinTheta;
+    // float cosTheta;
     unsigned int sector;
-    float sectorTheta;
-
+    unsigned int sequence;
+    // float sectorTheta;
 } SVM_t;
 
-void initSVM(SVM_t *pSvm);
-
-void executeSVM(SVM_t *pSvm);
+void SVMCreate(SVM_t *pSvm, float ts);
+void SVMPhases(SVM_t *pSvm, float a, float b, float c);
+void SVMAlphaBeta(SVM_t *pSvm);

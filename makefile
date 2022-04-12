@@ -8,6 +8,7 @@ else
 endif
 
 TARGET		:= main
+PSIM		:= psim
 FLAGS		:= -Wall -std=c11 -Wextra -Wconversion -fmessage-length=0 -fsingle-precision-constant -Wmissing-declarations -Wfloat-equal -lm -g
 
 SRCDIR		:= ./src
@@ -23,9 +24,14 @@ LIBMAKE		:= ./lib
 
 CC			:= gcc
 
-.PHONY: all run clean cleandata cleanlib cleanall lib
+.PHONY: all run psim clean cleandata cleanlib cleanall lib
 
-all: $(TARGET)
+all: cleanall lib build psim
+
+build: $(TARGET)
+
+psim:
+	$(CC) -shared -o $(PSIM)_.dll $(SRCDIR)/$(PSIM).c $(FLAGS) $(LIB) $(INCDIRS)
 
 run: all
 	./$(TARGET)
@@ -47,6 +53,8 @@ lib:
 clean:
 	rm -rf $(TARGET)
 	rm -rf $(ODIR)
+	rm -rf *.dll
+	rm -rf *.exe
 
 cleandata:
 
