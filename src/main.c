@@ -1,4 +1,5 @@
 #include "svm.h"
+#include "defines.h"
 
 #include <stdio.h>
 
@@ -19,7 +20,7 @@ int main()
     for(int i = 0; i < 12; i++)
     {
         executeSVM(&svm);
-        printf("theta: %f", svm.theta);
+        printf("theta: %f\n", svm.theta * 180.0/M_PI);
         printf("t1: %f; t2: %f; t0: %f\n", svm.t1, svm.t2, svm.t0);
         printf("V1: ");
         printVector(svm.v1);

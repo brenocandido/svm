@@ -1,11 +1,9 @@
 #include "svm.h"
+#include "defines.h"
 
 #include <math.h>
 #include <assert.h>
 #include <stdio.h>
-
-#define M_PI        3.14159265358979323846264338327
-#define M_SQRT3     1.73205080757
 
 static void _calculateTheta(SVM_t *pSvm);
 static void _detectSector(SVM_t *pSvm);
@@ -74,9 +72,13 @@ void _calculateVectorTimes(SVM_t *pSvm)
     float sinTheta = pSvm->sinTheta;
     float cosTheta = pSvm->cosTheta;
 
-    float T1 = m * ts/2.0 * (cosTheta - sinTheta/M_SQRT3);
-    float T2 = m * ts/M_SQRT3 * sinTheta;
-    float T0 = ts/2.0 - T1 - T2;
+    // float T1 = m * ts/2.0 * (cosTheta - sinTheta/M_SQRT3);
+    // float T2 = m * ts/M_SQRT3 * sinTheta;
+    // float T0 = ts/2.0 - T1 - T2;
+
+    float T2 = m * ts * sinTheta / (2 * M_SQRT3);
+    float T1 = (m * cosTheta * ts / 2 - T2)/2;
+    float T0 = ts/2 - T1 - T2;
 
     // float T1 = m * ts/2.0 * (cosTheta - sinTheta/M_SQRT3);
     // float T2 = m * ts/M_SQRT3 * sinTheta;
