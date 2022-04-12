@@ -67,18 +67,22 @@ void _detectSector(SVM_t *pSvm)
 
 void _calculateVectorTimes(SVM_t *pSvm)
 {
-    float ts = pSvm->ts;
-    float m = pSvm->m;
-    float sinTheta = pSvm->sinTheta;
-    float cosTheta = pSvm->cosTheta;
+    // float ts = pSvm->ts;
+    // float m = pSvm->m;
+    // float sinTheta = pSvm->sinTheta;
+    // float cosTheta = pSvm->cosTheta;
 
     // float T1 = m * ts/2.0 * (cosTheta - sinTheta/M_SQRT3);
     // float T2 = m * ts/M_SQRT3 * sinTheta;
     // float T0 = ts/2.0 - T1 - T2;
 
-    float T2 = m * ts * sinTheta / (2 * M_SQRT3);
-    float T1 = (m * cosTheta * ts / 2 - T2)/2;
-    float T0 = ts/2 - T1 - T2;
+    // float T2 = m * ts * sinTheta / (2 * M_SQRT3);
+    // float T1 = (m * cosTheta * ts / 2 - T2)/2;
+    // float T0 = ts/2 - T1 - T2;
+
+    pSvm->t2 = pSvm->m * pSvm->ts * M_DIV_1_SQRT3 * sin(pSvm->sectorTheta) * M_DIV_1_2;
+    pSvm->t1 = (pSvm->m * cos(pSvm->sectorTheta) * M_DIV_1_2 * pSvm->ts) * M_DIV_1_2 - (pSvm->t2 * M_DIV_1_2);
+    pSvm->t0 = (pSvm->ts * M_DIV_1_2) - pSvm->t1 - pSvm->t2;
 
     // float T1 = m * ts/2.0 * (cosTheta - sinTheta/M_SQRT3);
     // float T2 = m * ts/M_SQRT3 * sinTheta;
@@ -86,9 +90,9 @@ void _calculateVectorTimes(SVM_t *pSvm)
 
     // assert(T0 >= 0.0);
 
-    pSvm->t0 = T0;
-    pSvm->t1 = T1;
-    pSvm->t2 = T2;
+    // pSvm->t0 = T0;
+    // pSvm->t1 = T1;
+    // pSvm->t2 = T2;
 }
 
 void _getSvmVectors(SVM_t *pSvm)
