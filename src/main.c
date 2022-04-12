@@ -3,31 +3,54 @@
 
 #include <stdio.h>
 
+#define SIMULATION_TIME 0.5f
+#define TS 200e-6f
+#define TIMESTEP 20e-6f
+
 static void printVector(SvmVector_t vec);
 
 int main()
 {
+    FILE *fp_smv_data;
     SVM_t svm;
+    float t = 0.0f;
+    float elapsed_time = 1.0f;
 
     initSVM(&svm);
+    svm.m = 1.0f;
+    svm.freq = 60.0f;
 
-    svm.m = 1.0;
-    svm.freq = 48.0;
+    svm.deltaT = TIMESTEP;
+    svm.ts = TS;
 
-    svm.deltaT = 1.0/(48.0*12.0);
-    svm.ts = 1.0/(48.0*12.0);
-
-    for(int i = 0; i < 12; i++)
+    fp_smv_data = fopen("test.smv", "w+");
+    fprintf(fp_smv_data, "Time,M,Sector,Theta,Alpha,Beta,Theta_mod,T1,T2,T0\n");
+    while (t < SIMULATION_TIME)
     {
-        executeSVM(&svm);
-        printf("theta: %f\n", svm.theta * 180.0/M_PI);
-        printf("t1: %f; t2: %f; t0: %f\n", svm.t1, svm.t2, svm.t0);
-        printf("V1: ");
-        printVector(svm.v1);
-        printf("; V2: ");
-        printVector(svm.v2);
-        printf("\n");
+        if (elapsed_time >= TS)
+        {
+            executeSVM(&svm);
+            elapsed_time = 0.0f;
+
+            printf("theta: %f\n", svm.theta);
+            printf("t1: %f; t2: %f; t0: %f\n", svm.t1, svm.t2, svm.t0);
+            printf("V1: ");
+            printVector(svm.v1);
+            printf("; V2: ");
+            printVector(svm.v2);
+            printf("\n");
+        }
+        else
+        {
+            elapsed_time += TIMESTEP;
+        }
+        
+        fprintf(fp_smv_data, "%f,%f,%d,%f,%f,%f,%f,%f,%f,%f\n", t, svm.m, svm.sector, svm.theta, svm.alpha, svm.beta, svm.modTheta, svm.t1, svm.t2, svm.t0);
+
+        t += TIMESTEP;
     }
+
+    fclose(fp_smv_data);
 
     return 0;   
 }

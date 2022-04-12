@@ -29,10 +29,13 @@ typedef struct _SVM
 
     // Calculation variables
     float theta;        // rad
-    float sinTheta;
-    float cosTheta;
+    float sinModTheta;
+    float cosModTheta;
     unsigned int sector;
-    float sectorTheta;
+    float modTheta;
+
+    float alpha;
+    float beta;
 
 } SVM_t;
 

@@ -9,6 +9,7 @@ static void _calculateTheta(SVM_t *pSvm);
 static void _detectSector(SVM_t *pSvm);
 static void _calculateVectorTimes(SVM_t *pSvm);
 static void _getSvmVectors(SVM_t *pSvm);
+static void _registerOutputs(SVM_t *pSvm);
 
 void initSVM(SVM_t *pSvm)
 {
@@ -23,10 +24,13 @@ void initSVM(SVM_t *pSvm)
     pSvm->v2 = SVM_V2;
 
     pSvm->theta = 0.0f;        
-    pSvm->sinTheta = 0.0f;
-    pSvm->cosTheta = 0.0f;
+    pSvm->sinModTheta = 0.0f;
+    pSvm->cosModTheta = 0.0f;
     pSvm->sector = 0;
-    pSvm->sectorTheta = 0.0f;
+    pSvm->modTheta = 0.0f;
+
+    pSvm->alpha = 0.0f;
+    pSvm->beta = 0.0f;
 }
 
 void executeSVM(SVM_t *pSvm)
@@ -35,11 +39,12 @@ void executeSVM(SVM_t *pSvm)
     _detectSector(pSvm);
 
     // Referenced to first sector only
-    pSvm->sinTheta = sin(pSvm->sectorTheta);
-    pSvm->cosTheta = cos(pSvm->sectorTheta);
+    pSvm->sinModTheta = sin(pSvm->modTheta);
+    pSvm->cosModTheta = cos(pSvm->modTheta);
 
     _calculateVectorTimes(pSvm);
     _getSvmVectors(pSvm);
+    _registerOutputs(pSvm);
 }
 
 void _calculateTheta(SVM_t *pSvm)
@@ -48,6 +53,11 @@ void _calculateTheta(SVM_t *pSvm)
     float deltaTheta = wFreq * pSvm->deltaT;
 
     pSvm->theta += deltaTheta;
+
+    if(pSvm->theta >= M_2_PI)
+    {
+        pSvm->theta -= M_2_PI;
+    }
 }
 
 void _detectSector(SVM_t *pSvm)
@@ -59,40 +69,32 @@ void _detectSector(SVM_t *pSvm)
     int sector = (int)sectorRatio;
 
     // Gets theta parametrized to first sector only
-    float sectorTheta = (sectorRatio - (float)sector) * M_PI/3.0;
+    float modTheta = (sectorRatio - (float)sector) * M_PI/3.0;
 
-    pSvm->sectorTheta = sectorTheta;
+    pSvm->modTheta = modTheta;
     pSvm->sector = sector + 1;  // First sector should be 1
 }
 
 void _calculateVectorTimes(SVM_t *pSvm)
 {
-    // float ts = pSvm->ts;
-    // float m = pSvm->m;
-    // float sinTheta = pSvm->sinTheta;
-    // float cosTheta = pSvm->cosTheta;
+    float ts = pSvm->ts;
+    float m = pSvm->m;
+    float sinModTheta = pSvm->sinModTheta;
+    float cosModTheta = pSvm->cosModTheta;
 
-    // float T1 = m * ts/2.0 * (cosTheta - sinTheta/M_SQRT3);
-    // float T2 = m * ts/M_SQRT3 * sinTheta;
+    // float T1 = m * ts/2.0 * (cosModTheta - sinModTheta/M_SQRT3);
+    // float T2 = m * ts/M_SQRT3 * sinModTheta;
     // float T0 = ts/2.0 - T1 - T2;
 
-    // float T2 = m * ts * sinTheta / (2 * M_SQRT3);
-    // float T1 = (m * cosTheta * ts / 2 - T2)/2;
-    // float T0 = ts/2 - T1 - T2;
-
-    pSvm->t2 = pSvm->m * pSvm->ts * M_DIV_1_SQRT3 * sin(pSvm->sectorTheta) * M_DIV_1_2;
-    pSvm->t1 = (pSvm->m * cos(pSvm->sectorTheta) * M_DIV_1_2 * pSvm->ts) * M_DIV_1_2 - (pSvm->t2 * M_DIV_1_2);
-    pSvm->t0 = (pSvm->ts * M_DIV_1_2) - pSvm->t1 - pSvm->t2;
-
-    // float T1 = m * ts/2.0 * (cosTheta - sinTheta/M_SQRT3);
-    // float T2 = m * ts/M_SQRT3 * sinTheta;
-    // float T0 = ts - T1 - T2;    // BinWu p. 113
+    float T2 = m * ts * M_DIV_1_SQRT3 * sinModTheta * M_DIV_1_2;
+    float T1 = (m * cosModTheta * M_DIV_1_2 * ts) * M_DIV_1_2 - (T2 * M_DIV_1_2);
+    float T0 = (ts * M_DIV_1_2) - T1 - T2;
 
     // assert(T0 >= 0.0);
 
-    // pSvm->t0 = T0;
-    // pSvm->t1 = T1;
-    // pSvm->t2 = T2;
+    pSvm->t0 = T0;
+    pSvm->t1 = T1;
+    pSvm->t2 = T2;
 }
 
 void _getSvmVectors(SVM_t *pSvm)
@@ -140,4 +142,10 @@ void _getSvmVectors(SVM_t *pSvm)
 
     pSvm->v1 = v1;
     pSvm->v2 = v2;
+}
+
+void _registerOutputs(SVM_t *pSvm)
+{
+    pSvm->alpha = pSvm->m * cos(pSvm->theta);
+    pSvm->beta = pSvm->m * sin(pSvm->theta);
 }

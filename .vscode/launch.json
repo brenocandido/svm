@@ -7,7 +7,8 @@
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "program": "${workspaceRoot}/main.exe",
-      "preLaunchTask": "Make build"
+      "preLaunchTask": "Make build",
+      "stopAtEntry": true
     },
   ]
 }
