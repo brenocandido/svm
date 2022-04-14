@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 
-#define SIMULATION_TIME 0.5f
-#define TS 200e-6f
-#define TIMESTEP 20e-6f
+#define SIMULATION_TIME 0.035f
+#define TS 100e-6f
+#define TIMESTEP 1e-6f
 
 static void printVector(SvmVector_t vec);
 
@@ -20,10 +20,10 @@ int main()
     svm.m = 1.0f;
     svm.freq = 60.0f;
 
-    svm.deltaT = TIMESTEP;
+    svm.deltaT = TS;
     svm.ts = TS;
 
-    fp_smv_data = fopen("test.smv", "w+");
+    fp_smv_data = fopen("waveforms.smv", "w+");
     fprintf(fp_smv_data, "Time,M,Sector,Theta,Alpha,Beta,Theta_mod,T1,T2,T0\n");
     while (t < SIMULATION_TIME)
     {
@@ -31,14 +31,6 @@ int main()
         {
             executeSVM(&svm);
             elapsed_time = 0.0f;
-
-            printf("theta: %f\n", svm.theta);
-            printf("t1: %f; t2: %f; t0: %f\n", svm.t1, svm.t2, svm.t0);
-            printf("V1: ");
-            printVector(svm.v1);
-            printf("; V2: ");
-            printVector(svm.v2);
-            printf("\n");
         }
         else
         {

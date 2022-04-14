@@ -28,6 +28,7 @@ typedef struct _SVM
     SvmVector_t v2;
 
     // Calculation variables
+    float mSvm;         // SVM modulation index where 1.0 == sqrt(3)/2 in SVM
     float theta;        // rad
     float sinModTheta;
     float cosModTheta;

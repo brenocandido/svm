@@ -5,6 +5,9 @@
 #include <assert.h>
 #include <stdio.h>
 
+#define MODULATION_INDEX_SVM_GAIN           M_DIV_SQRT3_2
+
+static void _modulationIndexParametrize(SVM_t *pSvm);
 static void _calculateTheta(SVM_t *pSvm);
 static void _detectSector(SVM_t *pSvm);
 static void _calculateVectorTimes(SVM_t *pSvm);
@@ -35,6 +38,7 @@ void initSVM(SVM_t *pSvm)
 
 void executeSVM(SVM_t *pSvm)
 {
+    _modulationIndexParametrize(pSvm);
     _calculateTheta(pSvm);
     _detectSector(pSvm);
 
@@ -45,6 +49,14 @@ void executeSVM(SVM_t *pSvm)
     _calculateVectorTimes(pSvm);
     _getSvmVectors(pSvm);
     _registerOutputs(pSvm);
+}
+
+void _modulationIndexParametrize(SVM_t *pSvm)
+{
+    // index 1.0 would equal sqrt(3)/2 in SVM
+    // When translating to SVM plane, must divide by sqrt(3), duo to it being phase voltage,
+    // and divide by 2/3, due to it being the alpha beta transform gain (constant values transform)
+    pSvm->mSvm = pSvm->m * MODULATION_INDEX_SVM_GAIN;
 }
 
 void _calculateTheta(SVM_t *pSvm)
@@ -135,7 +147,6 @@ void _getSvmVectors(SVM_t *pSvm)
         break;
 
     default:
-        printf("%d\n", pSvm->sector);
         assert(0);
         break;
     }
