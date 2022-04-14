@@ -86,12 +86,12 @@ void _determineCurrentVectorTime(GateSequence_t *pGateSeq)
 
 static void _determineVector(GateSequence_t *pGateSeq)
 {
+    pGateSeq->prevVector = pGateSeq->currentVector;
+
     if(pGateSeq->currentVectorTime == 0)
         _determineVectorZero(pGateSeq);
     else 
     {
-        pGateSeq->prevVector = pGateSeq->currentVector;
-
         if(pGateSeq->currentVectorTime == 1)
             pGateSeq->currentVector = pGateSeq->v1;
         else
@@ -101,11 +101,9 @@ static void _determineVector(GateSequence_t *pGateSeq)
 
 static void _determineVectorZero(GateSequence_t *pGateSeq)
 {
-    // If previous vector was already a vector zero, then don't change it
+    // If previous vector was already a vector zero, then keep the current vector
     if(pGateSeq->prevVectorTime == 0)
     {
-        // Must update prevVector in case the vector was just changed in the previous cycle
-        pGateSeq->prevVector = pGateSeq->currentVector;
         return;
     }
 
@@ -115,8 +113,6 @@ static void _determineVectorZero(GateSequence_t *pGateSeq)
     {
         sum += (pGateSeq->prevVector & (1 << i)) >> i;
     }
-
-    pGateSeq->prevVector = pGateSeq->currentVector;
 
     // Uses vector with all P if most phases are already at that state
     // Else, uses all N
