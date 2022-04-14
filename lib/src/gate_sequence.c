@@ -103,9 +103,7 @@ static void _determineVectorZero(GateSequence_t *pGateSeq)
 {
     // If previous vector was already a vector zero, then keep the current vector
     if(pGateSeq->prevVectorTime == 0)
-    {
         return;
-    }
 
     // Sums the values of all three previous phase signals in order to determine how to perform the least commutations
     int sum = 0;
