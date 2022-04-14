@@ -94,15 +94,11 @@ void _calculateVectorTimes(SVM_t *pSvm)
     float sinModTheta = pSvm->sinModTheta;
     float cosModTheta = pSvm->cosModTheta;
 
-    // float T1 = m * ts/2.0 * (cosModTheta - sinModTheta/M_SQRT3);
-    // float T2 = m * ts/M_SQRT3 * sinModTheta;
-    // float T0 = ts/2.0 - T1 - T2;
-
     float T2 = m * ts * M_DIV_1_SQRT3 * sinModTheta * M_DIV_1_2;
     float T1 = (m * cosModTheta * M_DIV_1_2 * ts) * M_DIV_1_2 - (T2 * M_DIV_1_2);
     float T0 = (ts * M_DIV_1_2) - T1 - T2;
 
-    // assert(T0 >= 0.0);
+    assert(T0 >= 0.0);
 
     pSvm->t0 = T0;
     pSvm->t1 = T1;
