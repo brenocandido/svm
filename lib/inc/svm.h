@@ -1,3 +1,6 @@
+#ifndef SVM_H_
+#define SVM_H_
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -12,7 +15,7 @@
 
 typedef uint8_t SvmVector_t;
 
-typedef struct _SVM
+typedef struct
 {
     // Inputs
     float m;
@@ -27,7 +30,7 @@ typedef struct _SVM
     SvmVector_t v1;
     SvmVector_t v2;
 
-    // Calculation variables
+    // Internal variables
     float mSvm;         // SVM modulation index where 1.0 == sqrt(3)/2 in SVM
     float theta;        // rad
     float sinModTheta;
@@ -43,3 +46,5 @@ typedef struct _SVM
 void initSVM(SVM_t *pSvm);
 
 void executeSVM(SVM_t *pSvm);
+
+#endif  // SVM_H_
