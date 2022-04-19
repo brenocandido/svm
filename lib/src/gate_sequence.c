@@ -32,7 +32,7 @@ void initGateSequence(GateSequence_t *pGateSeq)
 
 void getCurrentGateSignals(GateSequence_t *pGateSeq)
 {
-    _getCurrentTime(pGateSeq);
+    // _getCurrentTime(pGateSeq);
     _determineCurrentVectorTime(pGateSeq);
     _determineVector(pGateSeq);
     _setGateSignals(pGateSeq);

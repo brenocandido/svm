@@ -15,7 +15,7 @@ int main()
     FILE *fp_smv_data;
 
     float t = 0.0f;
-    float elapsed_time = 1.0f;
+    float elapsed_time = 0.0f;
 
     SVM_t svm;
     GateSequence_t gateSeq;
@@ -46,14 +46,13 @@ int main()
         if (elapsed_time >= TS)
         {
             executeSVM(&svm);
-            elapsed_time = 0.0f;
-        }
-        else
-        {
-            elapsed_time += TIMESTEP;
+            elapsed_time -= TS;
         }
 
-        gateSeq.deltaT = TIMESTEP;
+        elapsed_time += TIMESTEP;
+
+        // gateSeq.deltaT = TIMESTEP;
+        gateSeq.cycleTime = elapsed_time;
         gateSeq.t0 = svm.t0;
         gateSeq.t1 = svm.t1;
         gateSeq.t2 = svm.t2;
