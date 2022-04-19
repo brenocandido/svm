@@ -23,7 +23,7 @@ typedef enum {
 typedef struct
 {
     // Inputs
-    float deltaT;               // Time variation from previous execution
+    float cycleTime;            // Current cycle time (0 <= cycleTime < TS)
     float ts;                   // Switching time
     float t0;                   // Vector 0 time
     float t1;                   // Vector 1 time
@@ -41,7 +41,6 @@ typedef struct
     GateSignal_t gW2;
 
     // Internal variables
-    float cycleTime;
     VectorSelect_t currentVectorSelect;
     VectorSelect_t prevVectorSelect;
     SvmVector_t currentVector;

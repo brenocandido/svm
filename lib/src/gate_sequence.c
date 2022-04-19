@@ -1,13 +1,12 @@
 #include "gate_sequence.h"
 
-static void _getCurrentTime(GateSequence_t *pGateSeq);
 static void _determineCurrentVectorTime(GateSequence_t *pGateSeq);
 static void _determineVector(GateSequence_t *pGateSeq);
 static void _setGateSignals(GateSequence_t *pGateSeq);
 
 void initGateSequence(GateSequence_t *pGateSeq)
 {
-    pGateSeq->deltaT = 0.0f;          
+    pGateSeq->cycleTime = 0.0f;
     pGateSeq->ts = 0.0f;         
     pGateSeq->t0 = 0.0f;         
     pGateSeq->t1 = 0.0f;         
@@ -22,7 +21,6 @@ void initGateSequence(GateSequence_t *pGateSeq)
     pGateSeq->gW1 = 0;
     pGateSeq->gW2 = 1;
 
-    pGateSeq->cycleTime = 0.0f;
     pGateSeq->currentVectorSelect = V0_1;
     pGateSeq->prevVectorSelect = V0_1;
     pGateSeq->currentVector = SVM_V0_N;
@@ -32,18 +30,9 @@ void initGateSequence(GateSequence_t *pGateSeq)
 
 void getCurrentGateSignals(GateSequence_t *pGateSeq)
 {
-    // _getCurrentTime(pGateSeq);
     _determineCurrentVectorTime(pGateSeq);
     _determineVector(pGateSeq);
     _setGateSignals(pGateSeq);
-}
-
-void _getCurrentTime(GateSequence_t *pGateSeq)
-{
-    pGateSeq->cycleTime += pGateSeq->deltaT;
-
-    if(pGateSeq->cycleTime >= pGateSeq->ts)
-        pGateSeq->cycleTime -= pGateSeq->ts;
 }
 
 void _determineCurrentVectorTime(GateSequence_t *pGateSeq)

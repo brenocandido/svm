@@ -37,7 +37,7 @@ int main()
     fprintf(fp_smv_data, "Time,M,Sector,Theta,Alpha,Beta,Theta_mod,T1,T2,T0,Vector,gU1,gU2,gV1,gV2,gW1,gW2,cycleTime\n");
     while (t < SIMULATION_TIME)
     {
-        if(t >= 0.00545367f)
+        if(t >= 0.014073)
         {
             volatile int bp = 0;
             bp++;
@@ -51,7 +51,6 @@ int main()
 
         elapsed_time += TIMESTEP;
 
-        // gateSeq.deltaT = TIMESTEP;
         gateSeq.cycleTime = elapsed_time;
         gateSeq.t0 = svm.t0;
         gateSeq.t1 = svm.t1;

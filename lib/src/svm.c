@@ -118,8 +118,8 @@ void _getSvmVectors(SVM_t *pSvm)
         break;
 
     case 2:
-        v1 = SVM_V2;
-        v2 = SVM_V3;
+        v1 = SVM_V3;
+        v2 = SVM_V2;
         break;
     
     case 3:
@@ -128,8 +128,8 @@ void _getSvmVectors(SVM_t *pSvm)
         break;
 
     case 4:
-        v1 = SVM_V4;
-        v2 = SVM_V5;
+        v1 = SVM_V5;
+        v2 = SVM_V4;
         break;
         
     case 5:
@@ -138,8 +138,8 @@ void _getSvmVectors(SVM_t *pSvm)
         break;
         
     case 6:
-        v1 = SVM_V6;
-        v2 = SVM_V1;
+        v1 = SVM_V1;
+        v2 = SVM_V6;
         break;
 
     default:
