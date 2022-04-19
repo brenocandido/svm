@@ -55,7 +55,7 @@ int main()
         if(gateSeq.prevVector != gateSeq.currentVector)
         {
             printVector(gateSeq.currentVector);
-            printf("\n");
+            printf("\t%s\n", (gateSeq.currentSeq == SEQ_A)? "SEQ_A" : "SEQ_B");
         }
         
         fprintf(fp_smv_data, "%f,%f,%d,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%f\n", 
@@ -72,9 +72,9 @@ int main()
 
 void printVector(SvmVector_t vec)
 {
-    char c0 = (vec & (1 << 0))? 'P':'N';
-    char c1 = (vec & (1 << 1))? 'P':'N';
-    char c2 = (vec & (1 << 2))? 'P':'N';
+    char c0 = (vec & (1 << 0))? 'P':'O';
+    char c1 = (vec & (1 << 1))? 'P':'O';
+    char c2 = (vec & (1 << 2))? 'P':'O';
 
     printf("%c%c%C", c2, c1, c0);
 }

@@ -3,7 +3,6 @@
 static void _getCurrentTime(GateSequence_t *pGateSeq);
 static void _determineCurrentVectorTime(GateSequence_t *pGateSeq);
 static void _determineVector(GateSequence_t *pGateSeq);
-static void _determineVectorZero(GateSequence_t *pGateSeq);
 static void _setGateSignals(GateSequence_t *pGateSeq);
 
 void initGateSequence(GateSequence_t *pGateSeq)
@@ -25,10 +24,12 @@ void initGateSequence(GateSequence_t *pGateSeq)
 
     pGateSeq->cycleTime = 0.0f;
     pGateSeq->prevTime = 0.0f;
-    pGateSeq->currentVectorTime = 0;
-    pGateSeq->prevVectorTime = 0;
+    pGateSeq->currentVectorSelect = V0_1;
+    pGateSeq->prevVectorSelect = V0_1;
     pGateSeq->prevVector = SVM_V0_N;
     pGateSeq->currentVector = SVM_V0_N;
+    pGateSeq->seqType = SEQ_A;
+    pGateSeq->currentSeq = SEQ_A;
 }
 
 void getCurrentGateSignals(GateSequence_t *pGateSeq)
@@ -64,57 +65,42 @@ void _determineCurrentVectorTime(GateSequence_t *pGateSeq)
     float seq6 = seq5 + t1;
     // Last one would be += T0/2, but that's covered in the 'else' clause
 
-    pGateSeq->prevVectorTime = pGateSeq->currentVectorTime;
+    pGateSeq->prevVectorSelect = pGateSeq->currentVectorSelect;
 
     if(cycleTime < seq0)
-        pGateSeq->currentVectorTime = 0;
+        pGateSeq->currentVectorSelect = V0_1;
     else if(cycleTime < seq1)
-        pGateSeq->currentVectorTime = 1;
+        pGateSeq->currentVectorSelect = V1;
     else if(cycleTime < seq2)
-        pGateSeq->currentVectorTime = 2;
+        pGateSeq->currentVectorSelect = V2;
     else if(cycleTime < seq3)
-        pGateSeq->currentVectorTime = 0;
+        pGateSeq->currentVectorSelect = V0_2;
     else if(cycleTime < seq4)
-        pGateSeq->currentVectorTime = 0;
+        pGateSeq->currentVectorSelect = V0_2;
     else if(cycleTime < seq5)
-        pGateSeq->currentVectorTime = 2;
+        pGateSeq->currentVectorSelect = V2;
     else if(cycleTime < seq6)
-        pGateSeq->currentVectorTime = 1;
+        pGateSeq->currentVectorSelect = V1;
     else
-        pGateSeq->currentVectorTime = 0;
+        pGateSeq->currentVectorSelect = V0_1;
 }
 
 static void _determineVector(GateSequence_t *pGateSeq)
 {
     pGateSeq->prevVector = pGateSeq->currentVector;
 
-    if(pGateSeq->currentVectorTime == 0)
-        _determineVectorZero(pGateSeq);
-    else 
-    {
-        if(pGateSeq->currentVectorTime == 1)
-            pGateSeq->currentVector = pGateSeq->v1;
-        else
-            pGateSeq->currentVector = pGateSeq->v2;
-    }
-}
+    if(pGateSeq->currentVectorSelect == V0_1)
+        pGateSeq->currentVector = (pGateSeq->currentSeq == SEQ_A)? SVM_V0_N : SVM_V0_P;
 
-static void _determineVectorZero(GateSequence_t *pGateSeq)
-{
-    // If previous vector was already a vector zero, then keep the current vector
-    if(pGateSeq->prevVectorTime == 0)
-        return;
+    else if(pGateSeq->currentVectorSelect == V0_2)
+        pGateSeq->currentVector = (pGateSeq->currentSeq == SEQ_A)? SVM_V0_P : SVM_V0_N;
 
-    // Sums the values of all three previous phase signals in order to determine how to perform the least commutations
-    int sum = 0;
-    for(int i = 0; i < 3; i++)
-    {
-        sum += (pGateSeq->prevVector & (1 << i)) >> i;
-    }
+    else if(pGateSeq->currentVectorSelect == V1)
+        pGateSeq->currentVector = (pGateSeq->currentSeq == SEQ_A)? pGateSeq->v1 : pGateSeq->v2;
 
-    // Uses vector with all P if most phases are already at that state
-    // Else, uses all N
-    pGateSeq->currentVector = (sum > 1)? SVM_V0_P : SVM_V0_N;
+    else
+        pGateSeq->currentVector = (pGateSeq->currentSeq == SEQ_A)? pGateSeq->v2 : pGateSeq->v1;
+
 }
 
 void _setGateSignals(GateSequence_t *pGateSeq)

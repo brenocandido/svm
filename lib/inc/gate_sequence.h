@@ -5,16 +5,32 @@
 
 typedef uint8_t GateSignal_t;
 
+typedef enum {
+    SEQ_A = 0,
+    SEQ_B = 1,
+    SEQ_AB = 2
+} SequenceType_t;
+
+// Switching sequence:
+// V0_1 -> V1 -> V2 -> V0_2 -> V0_2 -> V2 -> V1 -> V0_1 
+typedef enum {
+    V0_1,
+    V0_2,
+    V1,
+    V2
+} VectorSelect_t;
+
 typedef struct
 {
     // Inputs
-    float t;            // Current time
-    float ts;           // Switching time
-    float t0;           // Vector 0 time
-    float t1;           // Vector 1 time
-    float t2;           // Vector 2 time
-    SvmVector_t v1;     // Vector 1
-    SvmVector_t v2;     // Vector 2
+    float t;                    // Current time
+    float ts;                   // Switching time
+    float t0;                   // Vector 0 time
+    float t1;                   // Vector 1 time
+    float t2;                   // Vector 2 time
+    SvmVector_t v1;             // Vector 1
+    SvmVector_t v2;             // Vector 2
+    SequenceType_t seqType;     // Sequence A, B or AB
 
     // Outputs
     GateSignal_t gU1;
@@ -27,10 +43,11 @@ typedef struct
     // Internal variables
     float cycleTime;
     float prevTime;
-    uint8_t currentVectorTime;
-    uint8_t prevVectorTime;
+    VectorSelect_t currentVectorSelect;
+    VectorSelect_t prevVectorSelect;
     SvmVector_t prevVector;
     SvmVector_t currentVector;
+    SequenceType_t currentSeq;
 
 } GateSequence_t;
 
