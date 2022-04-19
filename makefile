@@ -7,12 +7,12 @@ else
 	FIND := find
 endif
 
-TARGET		:= main
+TARGET		?= main
 FLAGS		:= -Wall -std=c11 -Wextra -Wconversion -fmessage-length=0 -fsingle-precision-constant -Wmissing-declarations -Wfloat-equal -lm -g
 
 SRCDIR		:= ./src
 ODIR		:= ./obj
-APP			:= main
+APP			?= $(TARGET)
 CAPP		:= $(SRCDIR)/$(APP).c
 OMAIN		:= $(ODIR)/$(TARGET).o
 INCLUDES 	:= $(shell $(FIND) lib/inc inc -type d)
@@ -30,8 +30,13 @@ all: $(TARGET)
 run: all
 	./$(TARGET)
 
+ifeq ($(APP), main)
 $(TARGET): $(OMAIN) | lib
 	$(CC) $^ $(LIB) -o $@
+else
+$(TARGET): $(OMAIN) | lib
+	$(CC) -shared $^ $(LIB) -o $(TARGET).dll
+endif
 
 $(OMAIN): | $(ODIR)
 
