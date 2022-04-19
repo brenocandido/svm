@@ -76,19 +76,17 @@ void RUNSIMUSER(
     if (elapsed_time_s >= switching_period_s)
     {
         executeSVM(&svm);
-        elapsed_time_s = 0.0f;
         gateSeq.t0 = svm.t0;
         gateSeq.t1 = svm.t1;
         gateSeq.t2 = svm.t2;
         gateSeq.v1 = svm.v1;
         gateSeq.v2 = svm.v2;
-    }
-    else
-    {
-        elapsed_time_s += timestep_s;
+        elapsed_time_s -= switching_period_s;
     }
 
-    gateSeq.t = (float)t;
+    elapsed_time_s += timestep_s;
+
+    gateSeq.cycleTime = elapsed_time_s;
     getCurrentGateSignals(&gateSeq);
 
     out[0] = gateSeq.gU1;
