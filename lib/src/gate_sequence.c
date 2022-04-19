@@ -7,7 +7,7 @@ static void _setGateSignals(GateSequence_t *pGateSeq);
 
 void initGateSequence(GateSequence_t *pGateSeq)
 {
-    pGateSeq->t = 0.0f;          
+    pGateSeq->deltaT = 0.0f;          
     pGateSeq->ts = 0.0f;         
     pGateSeq->t0 = 0.0f;         
     pGateSeq->t1 = 0.0f;         
@@ -23,10 +23,8 @@ void initGateSequence(GateSequence_t *pGateSeq)
     pGateSeq->gW2 = 1;
 
     pGateSeq->cycleTime = 0.0f;
-    pGateSeq->prevTime = 0.0f;
     pGateSeq->currentVectorSelect = V0_1;
     pGateSeq->prevVectorSelect = V0_1;
-    pGateSeq->prevVector = SVM_V0_N;
     pGateSeq->currentVector = SVM_V0_N;
     pGateSeq->seqType = SEQ_A;
     pGateSeq->currentSeq = SEQ_A;
@@ -42,8 +40,7 @@ void getCurrentGateSignals(GateSequence_t *pGateSeq)
 
 void _getCurrentTime(GateSequence_t *pGateSeq)
 {
-    pGateSeq->cycleTime += pGateSeq->t - pGateSeq->prevTime;
-    pGateSeq->prevTime = pGateSeq->t;
+    pGateSeq->cycleTime += pGateSeq->deltaT;
 
     if(pGateSeq->cycleTime >= pGateSeq->ts)
         pGateSeq->cycleTime -= pGateSeq->ts;
@@ -87,8 +84,6 @@ void _determineCurrentVectorTime(GateSequence_t *pGateSeq)
 
 static void _determineVector(GateSequence_t *pGateSeq)
 {
-    pGateSeq->prevVector = pGateSeq->currentVector;
-
     if(pGateSeq->currentVectorSelect == V0_1)
         pGateSeq->currentVector = (pGateSeq->currentSeq == SEQ_A)? SVM_V0_N : SVM_V0_P;
 
