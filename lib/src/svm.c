@@ -9,7 +9,7 @@
 #define SVM_SECTOR_SIZE                     M_DIV_PI_3
 #define SVM_SECTOR_SIZE_AB                  M_DIV_PI_6
 
-static void _modulationIndexParametrize(SVM_t *pSvm);
+static void _parametrizeModulationIndex(SVM_t *pSvm);
 static void _calculateTheta(SVM_t *pSvm);
 static void _detectSector(SVM_t *pSvm);
 static void _calculateVectorTimes(SVM_t *pSvm);
@@ -30,7 +30,7 @@ void initSVM(SVM_t *pSvm)
 
     pSvm->theta = 0.0f;        
     pSvm->sinModTheta = 0.0f;
-    pSvm->cosModTheta = 0.0f;
+    pSvm->cosModTheta = 1.0f;
     pSvm->sector = SVM_SEC_1A;
     pSvm->modTheta = 0.0f;
 
@@ -40,7 +40,7 @@ void initSVM(SVM_t *pSvm)
 
 void executeSVM(SVM_t *pSvm)
 {
-    _modulationIndexParametrize(pSvm);
+    _parametrizeModulationIndex(pSvm);
     _calculateTheta(pSvm);
     _detectSector(pSvm);
 
@@ -53,7 +53,7 @@ void executeSVM(SVM_t *pSvm)
     _registerOutputs(pSvm);
 }
 
-void _modulationIndexParametrize(SVM_t *pSvm)
+void _parametrizeModulationIndex(SVM_t *pSvm)
 {
     // index 1.0 would equal sqrt(3)/2 in SVM
     // When translating to SVM plane, must divide by sqrt(3), duo to it being phase voltage,
@@ -69,9 +69,7 @@ void _calculateTheta(SVM_t *pSvm)
     pSvm->theta += deltaTheta;
 
     if(pSvm->theta >= M_2_PI)
-    {
         pSvm->theta -= M_2_PI;
-    }
 }
 
 void _detectSector(SVM_t *pSvm)

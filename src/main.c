@@ -31,19 +31,13 @@ int main()
     gateSeq.ts = TS;
     gateSeq.seqType = SEQ_AB;
 
-    // Auxilaiary
+    // Auxiliary for printing when vector changes
     SvmVector_t prevVec = gateSeq.currentVector;
 
     fp_smv_data = fopen("waveforms.smv", "w+");
-    fprintf(fp_smv_data, "Time,M,Sector,Theta,Alpha,Beta,Theta_mod,T1,T2,T0,Vector,gU1,gU2,gV1,gV2,gW1,gW2,cycleTime\n");
+    fprintf(fp_smv_data, "Time,M,Sector,Theta,Alpha,Beta,Theta_mod,T1,T2,T0,Vector,gU1,gU2,gV1,gV2,gW1,gW2,cycleTime,Sequence\n");
     while (t < SIMULATION_TIME)
     {
-        if(t >= 0.014073)
-        {
-            volatile int bp = 0;
-            bp++;
-        }
-
         if (elapsed_time >= TS)
         {
             executeSVM(&svm);
@@ -65,13 +59,13 @@ int main()
         {
             prevVec = gateSeq.currentVector;
             printVector(gateSeq.currentVector);
-            printf("\t%s\n", (gateSeq.currentSeq == SEQ_A)? "SEQ_A" : "SEQ_B");
+            printf("\t%s\t%d\n", (gateSeq.currentSeq == SEQ_A)? "SEQ_A" : "SEQ_B", gateSeq.sector);
         }
         
-        fprintf(fp_smv_data, "%f,%f,%d,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%d,%f\n", 
+        fprintf(fp_smv_data, "%f,%f,%d,%f,%f,%f,%f,%f,%f,%f,%d,%d,%d,%d,%d,%d,%d,%f,%d\n", 
                 t, svm.m, svm.sector, svm.theta, svm.alpha, svm.beta, svm.modTheta, svm.t1, svm.t2, svm.t0,
                 gateSeq.currentVectorSelect, gateSeq.gU1, gateSeq.gU2, gateSeq.gV1, gateSeq.gV2, gateSeq.gW1, gateSeq.gW2, 
-                gateSeq.cycleTime);
+                gateSeq.cycleTime,gateSeq.currentSeq);
 
         t += TIMESTEP;
     }
