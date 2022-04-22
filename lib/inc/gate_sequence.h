@@ -31,6 +31,7 @@ typedef struct
     SvmVector_t v1;             // Vector 1
     SvmVector_t v2;             // Vector 2
     SequenceType_t seqType;     // Sequence A, B or AB
+    SvmSector_t sector;         // Current sector (1A,1B,2A,...)
 
     // Outputs
     GateSignal_t gU1;

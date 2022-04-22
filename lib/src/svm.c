@@ -6,6 +6,8 @@
 #include <stdio.h>
 
 #define MODULATION_INDEX_SVM_GAIN           M_DIV_SQRT3_2
+#define SVM_SECTOR_SIZE                     M_DIV_PI_3
+#define SVM_SECTOR_SIZE_AB                  M_DIV_PI_6
 
 static void _modulationIndexParametrize(SVM_t *pSvm);
 static void _calculateTheta(SVM_t *pSvm);
@@ -29,7 +31,7 @@ void initSVM(SVM_t *pSvm)
     pSvm->theta = 0.0f;        
     pSvm->sinModTheta = 0.0f;
     pSvm->cosModTheta = 0.0f;
-    pSvm->sector = 0;
+    pSvm->sector = SVM_SEC_1A;
     pSvm->modTheta = 0.0f;
 
     pSvm->alpha = 0.0f;
@@ -74,17 +76,23 @@ void _calculateTheta(SVM_t *pSvm)
 
 void _detectSector(SVM_t *pSvm)
 {
-    // Theta / 60 deg
-    float sectorRatio = pSvm->theta/(M_PI/3.0);
+    // Sector for getting mod theta
+    float localSectorRatio = pSvm->theta/SVM_SECTOR_SIZE;
+
+    // Sector for determining which AB sector it is
+    float abSectorRatio = pSvm->theta/SVM_SECTOR_SIZE_AB;
     
-    // Truncates to sector number
-    int sector = (int)sectorRatio;
+    // Truncates to sector number to calculate mod theta
+    int sector = (int)localSectorRatio;
+
+    // Truncates to AB sector number
+    int abSector = (int)abSectorRatio;
 
     // Gets theta parametrized to first sector only
-    float modTheta = (sectorRatio - (float)sector) * M_PI/3.0;
+    float modTheta = (localSectorRatio - (float)sector) * SVM_SECTOR_SIZE;
 
     pSvm->modTheta = modTheta;
-    pSvm->sector = sector + 1;  // First sector should be 1
+    pSvm->sector = abSector + 1;  // First sector should be 1
 }
 
 void _calculateVectorTimes(SVM_t *pSvm)
@@ -112,32 +120,38 @@ void _getSvmVectors(SVM_t *pSvm)
 
     switch (pSvm->sector)
     {
-    case 1:
+    case SVM_SEC_1A:
+    case SVM_SEC_1B:
         v1 = SVM_V1;
         v2 = SVM_V2;
         break;
 
-    case 2:
+    case SVM_SEC_2A:
+    case SVM_SEC_2B:
         v1 = SVM_V3;
         v2 = SVM_V2;
         break;
     
-    case 3:
+    case SVM_SEC_3A:
+    case SVM_SEC_3B:
         v1 = SVM_V3;
         v2 = SVM_V4;
         break;
 
-    case 4:
+    case SVM_SEC_4A:
+    case SVM_SEC_4B:
         v1 = SVM_V5;
         v2 = SVM_V4;
         break;
         
-    case 5:
+    case SVM_SEC_5A:
+    case SVM_SEC_5B:
         v1 = SVM_V5;
         v2 = SVM_V6;
         break;
         
-    case 6:
+    case SVM_SEC_6A:
+    case SVM_SEC_6B:
         v1 = SVM_V1;
         v2 = SVM_V6;
         break;

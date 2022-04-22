@@ -1,5 +1,6 @@
 #include "gate_sequence.h"
 
+static void _determineCurrentSequenceType(GateSequence_t *pGateSeq);
 static void _determineCurrentVectorTime(GateSequence_t *pGateSeq);
 static void _determineVector(GateSequence_t *pGateSeq);
 static void _setGateSignals(GateSequence_t *pGateSeq);
@@ -13,6 +14,7 @@ void initGateSequence(GateSequence_t *pGateSeq)
     pGateSeq->t2 = 0.0f;         
     pGateSeq->v1 = SVM_V1;   
     pGateSeq->v2 = SVM_V2;   
+    pGateSeq->sector = SVM_SEC_1A;
 
     pGateSeq->gU1 = 0;
     pGateSeq->gU2 = 1;
@@ -30,25 +32,65 @@ void initGateSequence(GateSequence_t *pGateSeq)
 
 void getCurrentGateSignals(GateSequence_t *pGateSeq)
 {
+    _determineCurrentSequenceType(pGateSeq);
     _determineCurrentVectorTime(pGateSeq);
     _determineVector(pGateSeq);
     _setGateSignals(pGateSeq);
+}
+
+void _determineCurrentSequenceType(GateSequence_t *pGateSeq)
+{
+    // Used in AB
+    // Can't declare inside switch case
+    SvmSector_t sec = pGateSeq->sector;
+
+    switch (pGateSeq->seqType)
+    {
+        case SEQ_A:
+            pGateSeq->currentSeq = SEQ_A;
+            break;
+        case SEQ_B:
+            pGateSeq->currentSeq = SEQ_B;
+            break;
+        case SEQ_AB:
+            if (sec == SVM_SEC_1A || sec == SVM_SEC_2A || sec == SVM_SEC_3A ||
+                sec == SVM_SEC_4A || sec == SVM_SEC_5A || sec == SVM_SEC_6A)
+                pGateSeq->currentSeq = SEQ_A;
+            else
+                pGateSeq->currentSeq = SEQ_B;
+
+            break;
+    }
 }
 
 void _determineCurrentVectorTime(GateSequence_t *pGateSeq)
 {
     float cycleTime = pGateSeq->cycleTime;
     float t0 = pGateSeq->t0;
-    float t1 = pGateSeq->t1;
-    float t2 = pGateSeq->t2;
+
+    // Ti and Tj are not named 1/2 because they depend on the sequence type
+    // If B is the current sequence, V2 must be applied for T2 time first
+    float ti;
+    float tj;
+
+    if(pGateSeq->currentSeq == SEQ_A)
+    {
+        ti = pGateSeq->t1;
+        tj = pGateSeq->t2;
+    }
+    else
+    {
+        ti = pGateSeq->t2;
+        tj = pGateSeq->t1;
+    }
 
     float seq0 = t0/2.0;
-    float seq1 = seq0 + t1;
-    float seq2 = seq1 + t2;
+    float seq1 = seq0 + ti;
+    float seq2 = seq1 + tj;
     float seq3 = seq2 + t0/2.0;
     float seq4 = seq3 + t0/2.0;
-    float seq5 = seq4 + t2;
-    float seq6 = seq5 + t1;
+    float seq5 = seq4 + tj;
+    float seq6 = seq5 + ti;
     // Last one would be += T0/2, but that's covered in the 'else' clause
 
     pGateSeq->prevVectorSelect = pGateSeq->currentVectorSelect;
