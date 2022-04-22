@@ -68,21 +68,10 @@ void _determineCurrentVectorTime(GateSequence_t *pGateSeq)
     float cycleTime = pGateSeq->cycleTime;
     float t0 = pGateSeq->t0;
 
-    // Ti and Tj are not named 1/2 because they depend on the sequence type
+    // Ti and Tj are not named T1 or T2 because they depend on the sequence type
     // If B is the current sequence, V2 must be applied for T2 time first
-    float ti;
-    float tj;
-
-    if(pGateSeq->currentSeq == SEQ_A)
-    {
-        ti = pGateSeq->t1;
-        tj = pGateSeq->t2;
-    }
-    else
-    {
-        ti = pGateSeq->t2;
-        tj = pGateSeq->t1;
-    }
+    float ti = (pGateSeq->currentSeq == SEQ_A)? pGateSeq->t1 : pGateSeq->t2;
+    float tj = (pGateSeq->currentSeq == SEQ_A)? pGateSeq->t2 : pGateSeq->t1;
 
     float seq0 = t0/2.0;
     float seq1 = seq0 + ti;
