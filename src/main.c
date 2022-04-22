@@ -29,6 +29,7 @@ int main()
     svm.ts = TS;
 
     gateSeq.ts = TS;
+    gateSeq.seqType = SEQ_AB;
 
     // Auxilaiary
     SvmVector_t prevVec = gateSeq.currentVector;
@@ -57,6 +58,7 @@ int main()
         gateSeq.t2 = svm.t2;
         gateSeq.v1 = svm.v1;
         gateSeq.v2 = svm.v2;
+        gateSeq.sector = svm.sector;
         getCurrentGateSignals(&gateSeq);
 
         if(prevVec != gateSeq.currentVector)
