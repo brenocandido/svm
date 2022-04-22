@@ -98,17 +98,17 @@ void _determineCurrentVectorTime(GateSequence_t *pGateSeq)
     if(cycleTime < seq0)
         pGateSeq->currentVectorSelect = V0_1;
     else if(cycleTime < seq1)
-        pGateSeq->currentVectorSelect = V1;
+        pGateSeq->currentVectorSelect = VI;
     else if(cycleTime < seq2)
-        pGateSeq->currentVectorSelect = V2;
+        pGateSeq->currentVectorSelect = VJ;
     else if(cycleTime < seq3)
         pGateSeq->currentVectorSelect = V0_2;
     else if(cycleTime < seq4)
         pGateSeq->currentVectorSelect = V0_2;
     else if(cycleTime < seq5)
-        pGateSeq->currentVectorSelect = V2;
+        pGateSeq->currentVectorSelect = VJ;
     else if(cycleTime < seq6)
-        pGateSeq->currentVectorSelect = V1;
+        pGateSeq->currentVectorSelect = VI;
     else
         pGateSeq->currentVectorSelect = V0_1;
 }
@@ -121,7 +121,7 @@ static void _determineVector(GateSequence_t *pGateSeq)
     else if(pGateSeq->currentVectorSelect == V0_2)
         pGateSeq->currentVector = (pGateSeq->currentSeq == SEQ_A)? SVM_V0_P : SVM_V0_N;
 
-    else if(pGateSeq->currentVectorSelect == V1)
+    else if(pGateSeq->currentVectorSelect == VI)
         pGateSeq->currentVector = (pGateSeq->currentSeq == SEQ_A)? pGateSeq->v1 : pGateSeq->v2;
 
     else

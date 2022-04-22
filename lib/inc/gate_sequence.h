@@ -12,11 +12,14 @@ typedef enum {
 } SequenceType_t;
 
 // Switching sequence:
-// V0_1 -> V1 -> V2 -> V0_2 -> V0_2 -> V2 -> V1 -> V0_1 
+// V0_1 -> VI -> VJ -> V0_2 -> V0_2 -> VJ -> VI -> V0_1 
+// Using i and j instead of 1 and 2 because vectors may change depending on the sequence type
+// A seq is V1 -> V2
+// B seq is V2 -> V1
 typedef enum {
     V0_1 = 0,
-    V1 = 1,
-    V2 = 2,
+    VI = 1,
+    VJ = 2,
     V0_2 = 3
 } VectorSelect_t;
 
