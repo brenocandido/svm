@@ -1,8 +1,9 @@
 Vlink = 800//
-m = 0.5
+m = 0.8
 fo = 60
-fs = 5k
+fs = 720
 dll_fs = 100*fs
+seq = 1
 
-R = 20
-L = 0
+R = 11
+L = 47m

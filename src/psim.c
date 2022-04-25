@@ -50,6 +50,7 @@ void RUNSIMUSER(
     static float switching_period_s;
     static float m;
     static float fo;
+    static uint16_t seq;
 
     static float elapsed_time_s;
 
@@ -57,6 +58,7 @@ void RUNSIMUSER(
     switching_period_s = (float)in[0];
     m = (float)in[1];
     fo = (float)in[2];
+    seq = (uint16_t)in[3];
 
     if (init == 0)
     {
@@ -70,6 +72,19 @@ void RUNSIMUSER(
 
         gateSeq.ts = switching_period_s;
 
+        switch(seq)
+        {
+            case 0:
+                gateSeq.seqType = SEQ_A;
+                break;
+            case 1:
+                gateSeq.seqType = SEQ_B;
+                break;
+            default:
+                gateSeq.seqType = SEQ_AB;
+                break;
+        }
+
         init = 1;
     }
 
@@ -81,6 +96,7 @@ void RUNSIMUSER(
         gateSeq.t2 = svm.t2;
         gateSeq.v1 = svm.v1;
         gateSeq.v2 = svm.v2;
+        gateSeq.sector = svm.sector;
         elapsed_time_s -= switching_period_s;
     }
 
