@@ -13,8 +13,11 @@ FLAGS		:= -Wall -std=c11 -Wextra -Wconversion -fmessage-length=0 -fsingle-precis
 SRCDIR		:= ./src
 ODIR		:= ./obj
 APP			?= $(TARGET)
+PSIMTARG	:= psim
+CPSIM		:= $(SRCDIR)/$(PSIMTARG).c
 CAPP		:= $(SRCDIR)/$(APP).c
 OMAIN		:= $(ODIR)/$(TARGET).o
+OPSIM		:= $(ODIR)/$(PSIMTARG).o
 INCLUDES 	:= $(shell $(FIND) lib/inc inc -type d)
 INCDIRS		:= $(patsubst %,-I %,$(INCLUDES))
 
@@ -38,9 +41,15 @@ $(TARGET): $(OMAIN) | lib
 	$(CC) -shared -DSIMBA_EXTERNAL_LIB_EXPORT $^ $(LIB) -o $(TARGET).dll
 endif
 
+psim: $(OPSIM) | lib
+	$(CC) -shared -DSIMBA_EXTERNAL_LIB_EXPORT $^ $(LIB) -o $(PSIMTARG).dll
+
 $(OMAIN): | $(ODIR)
 
 $(OMAIN): $(CAPP)
+	$(CC) -c $< -o $@ $(FLAGS) $(INCDIRS)
+
+$(OPSIM): $(CPSIM) | $(ODIR)
 	$(CC) -c $< -o $@ $(FLAGS) $(INCDIRS)
 
 $(ODIR): 
