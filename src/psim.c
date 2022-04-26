@@ -123,4 +123,5 @@ void RUNSIMUSER(
     out[15] = svm.deltaT;
     out[16] = svm.ts;
     out[17] = gateSeq.cycleTime;
+    out[18] = gateSeq.currentSeq;
 }
