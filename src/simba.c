@@ -1,47 +1,17 @@
 #include "svm.h"
 #include "defines.h"
 #include "gate_sequence.h"
-
+#include "simba_library.h"
+#include <stdlib.h>
 #include <stdio.h>
 
 uint16_t init = 0;
 
-void OPENSIMUSER(
-    const char *szId,
-    const char *szNetlist,
-    void **ptrUserData,
-    int *pnError,
-    char *szErrorMsg,
-    void *pPsimParams);
-
-void RUNSIMUSER(
-    double t,
-    double delt,
-    double *in,
-    double *out,
-    void **ptrUserData,
-    int *pnError,
-    char *szErrorMsg);
-
-void OPENSIMUSER(
-    const char *szId,
-    const char *szNetlist,
-    void **ptrUserData,
-    int *pnError,
-    char *szErrorMsg,
-    void *pPsimParams)
-{
-    init = 0;
+void initialize() {
+	init = 0;
 }
 
-void RUNSIMUSER(
-    double t,
-    double delt,
-    double *in,
-    double *out,
-    void **ptrUserData,
-    int *pnError,
-    char *szErrorMsg)
+void calculate_outputs(double* outputs, double* inputs, double time, double time_step)
 {
     static SVM_t svm;
     static GateSequence_t gateSeq;
@@ -54,11 +24,11 @@ void RUNSIMUSER(
 
     static float elapsed_time_s;
 
-    timestep_s = (float)delt;
-    switching_period_s = (float)in[0];
-    m = (float)in[1];
-    fo = (float)in[2];
-    seq = (uint16_t)in[3];
+    timestep_s = (float)time_step;
+    switching_period_s = (float)inputs[0];
+    m = (float)inputs[1];
+    fo = (float)inputs[2];
+    seq = (uint16_t)inputs[3];
 
     if (init == 0)
     {
@@ -105,22 +75,22 @@ void RUNSIMUSER(
     gateSeq.cycleTime = elapsed_time_s;
     getCurrentGateSignals(&gateSeq);
 
-    out[0] = gateSeq.gU1;
-    out[1] = gateSeq.gU2;
-    out[2] = gateSeq.gV1;
-    out[3] = gateSeq.gV2;
-    out[4] = gateSeq.gW1;
-    out[5] = gateSeq.gW2;
-    out[6] = svm.theta;
-    out[7] = svm.alpha;
-    out[8] = svm.beta;
-    out[9] = svm.modTheta;
-    out[10] = svm.t1;
-    out[11] = svm.t2;
-    out[12] = svm.t0;
-    out[13] = svm.m;
-    out[14] = svm.sector;
-    out[15] = svm.deltaT;
-    out[16] = svm.ts;
-    out[17] = gateSeq.cycleTime;
+    outputs[0] = (double)gateSeq.gU1;
+    outputs[1] = (double)gateSeq.gU2;
+    outputs[2] = (double)gateSeq.gV1;
+    outputs[3] = (double)gateSeq.gV2;
+    outputs[4] = (double)gateSeq.gW1;
+    outputs[5] = (double)gateSeq.gW2;
+    outputs[6] = (double)svm.theta;
+    outputs[7] = (double)svm.alpha;
+    outputs[8] = (double)svm.beta;
+    outputs[9] = (double)svm.modTheta;
+    outputs[10] = (double)svm.t1;
+    outputs[11] = (double)svm.t2;
+    outputs[12] = (double)svm.t0;
+    outputs[13] = (double)svm.m;
+    outputs[14] = (double)svm.sector;
+    outputs[15] = (double)svm.deltaT;
+    outputs[16] = (double)svm.ts;
+    outputs[17] = (double)gateSeq.cycleTime;
 }

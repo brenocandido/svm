@@ -35,7 +35,7 @@ $(TARGET): $(OMAIN) | lib
 	$(CC) $^ $(LIB) -o $@
 else
 $(TARGET): $(OMAIN) | lib
-	$(CC) -shared $^ $(LIB) -o $(TARGET).dll
+	$(CC) -shared -DSIMBA_EXTERNAL_LIB_EXPORT $^ $(LIB) -o $(TARGET).dll
 endif
 
 $(OMAIN): | $(ODIR)
