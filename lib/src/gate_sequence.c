@@ -73,6 +73,17 @@ void _determineCurrentVectorTime(GateSequence_t *pGateSeq)
     float ti = (pGateSeq->currentSeq == SEQ_A)? pGateSeq->t1 : pGateSeq->t2;
     float tj = (pGateSeq->currentSeq == SEQ_A)? pGateSeq->t2 : pGateSeq->t1;
 
+    SvmSector_t sec = pGateSeq->sector;
+
+    if( sec == SVM_SEC_2A || sec == SVM_SEC_2B ||
+        sec == SVM_SEC_4A || sec == SVM_SEC_4B ||
+        sec == SVM_SEC_6A || sec == SVM_SEC_6B)
+    {
+        float swap = tj;
+        tj = ti;
+        ti = swap;
+    }
+
     float seq0 = t0/2.0;
     float seq1 = seq0 + ti;
     float seq2 = seq1 + tj;
