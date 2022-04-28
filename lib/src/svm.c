@@ -96,12 +96,12 @@ void _detectSector(SVM_t *pSvm)
 void _calculateVectorTimes(SVM_t *pSvm)
 {
     float ts = pSvm->ts;
-    float m = pSvm->m;
+    float m = pSvm->mSvm;
     float sinModTheta = pSvm->sinModTheta;
     float cosModTheta = pSvm->cosModTheta;
 
-    float T2 = m * ts * M_DIV_1_SQRT3 * sinModTheta * M_DIV_1_2;
-    float T1 = (m * cosModTheta * M_DIV_1_2 * ts) * M_DIV_1_2 - (T2 * M_DIV_1_2);
+    float T1 = m * ts/2 * (cosModTheta - sinModTheta * M_DIV_1_SQRT3);
+    float T2 = m * ts * sinModTheta * M_DIV_1_SQRT3;
     float T0 = (ts * M_DIV_1_2) - T1 - T2;
 
     assert(T0 >= 0.0);
